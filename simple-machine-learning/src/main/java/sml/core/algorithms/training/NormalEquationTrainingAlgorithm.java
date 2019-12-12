@@ -1,11 +1,11 @@
-package sml.core.algorithms.minimization;
+package sml.core.algorithms.training;
 
 import org.ejml.simple.SimpleMatrix;
 
-public class NormalEquation {
+public class NormalEquationTrainingAlgorithm implements ITrainingAlgorithm {
 
-	// Returns Theta vector
-	public static SimpleMatrix minimizeCostWithNormalEquation(SimpleMatrix featureMatrix, SimpleMatrix yVector) {
+	@Override
+	public SimpleMatrix train(SimpleMatrix featureMatrix, SimpleMatrix yVector) {
 		SimpleMatrix xTransposed = featureMatrix.transpose();
 		SimpleMatrix theta = (xTransposed.mult(featureMatrix)).invert().mult(xTransposed).mult(yVector);
 		return theta;

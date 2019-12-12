@@ -1,8 +1,12 @@
-package sml.core;
+package sml.core.algorithms;
 
 import org.ejml.simple.SimpleMatrix;
 
-public class LinearRegressionAlgorithm implements IRegressionAlgorithm {
+public class LogisticRegressionAlgorithm implements IRegressionAlgorithm {
+
+	public static double sigmoid(double z) {
+		return 1.0 / (1 + Math.exp(-z));
+	}
 
 	@Override
 	public double calculateCost(SimpleMatrix featureMatrix, SimpleMatrix yVector, SimpleMatrix thetaVector) {
@@ -12,14 +16,14 @@ public class LinearRegressionAlgorithm implements IRegressionAlgorithm {
 			SimpleMatrix featureRow = featureMatrix.rows(i, i + 1);
 			double h = calculateHypothesis(featureRow, thetaVector);
 			double y = yVector.get(i, 0);
-			sum += (h - y) * (h - y);
+			sum += -y * Math.log(h) - (1 - y) * Math.log(1 - h);
 		}
-		return sum / (m * 2);
+		return sum / m;
 	}
 
 	@Override
 	public double calculateHypothesis(SimpleMatrix featureRow, SimpleMatrix thetaVector) {
-		return thetaVector.transpose().mult(featureRow.transpose()).get(0, 0);
+		return sigmoid(thetaVector.transpose().mult(featureRow.transpose()).get(0, 0));
 	}
 
 }

@@ -6,12 +6,12 @@ import org.ejml.simple.SimpleMatrix;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sml.core.LinearRegressionAlgorithm;
-import sml.core.Normalization;
-import sml.core.NormalizationParameters;
-import sml.core.SmlUtil;
-import sml.core.algorithms.minimization.GradientDescent;
-import sml.core.algorithms.minimization.NormalEquation;
+import sml.core.IRegressionModel;
+import sml.core.algorithms.LinearRegressionAlgorithm;
+import sml.core.builders.RegressionModelBuilder;
+import sml.core.normalization.Normalization;
+import sml.core.normalization.NormalizationParameters;
+import sml.core.utility.SmlUtil;
 import sml.test.utility.TestUtil;
 
 public class Ex1_LinearRegressionTest {
@@ -20,11 +20,14 @@ public class Ex1_LinearRegressionTest {
 	public void calculateHypothesisShouldCalculateCorrectly1() {
 		double[] features = new double[] { 1.0, 2.0, 3.0 };
 		double[] theta = new double[] { 1.0, 3.0, 5.0, 10.0 };
-		SimpleMatrix featureRow = SmlUtil.createFeatureRow(features);
+		SimpleMatrix featureRow = SmlUtil.createRow(features);
 		SimpleMatrix thetaVector = SmlUtil.createVector(theta.length);
 		thetaVector.setColumn(0, 0, theta);
+		IRegressionModel model = new RegressionModelBuilder().withLinearRegression().withPreTrained(thetaVector, null)
+				.build();
+
 		double expectedHypothesis = 44.0;
-		double actualHypothesis = new LinearRegressionAlgorithm().calculateHypothesis(featureRow, thetaVector);
+		double actualHypothesis = model.calculateHypothesis(featureRow);
 		Assert.assertEquals(expectedHypothesis, actualHypothesis, 0.0001);
 	}
 
@@ -32,7 +35,7 @@ public class Ex1_LinearRegressionTest {
 	public void calculateHypothesisShouldCalculateCorrectly2() {
 		double[] features = { -0.44127, -0.22368 };
 		double[] theta = new double[] { 338658.249249, 104127.515597, -172.205334 };
-		SimpleMatrix featureRow = SmlUtil.createFeatureRow(features);
+		SimpleMatrix featureRow = SmlUtil.prependOnesVector(SmlUtil.createRow(features));
 		SimpleMatrix thetaVector = SmlUtil.createVector(theta.length);
 		thetaVector.setColumn(0, 0, theta);
 
@@ -112,27 +115,20 @@ public class Ex1_LinearRegressionTest {
 		SimpleMatrix featureMatrix = matrix.cols(0, matrix.numCols() - 1);
 		SimpleMatrix yVector = matrix.cols(matrix.numCols() - 1, matrix.numCols());
 
-		// Normalize features
-		NormalizationParameters normalizationParameters = Normalization.calculateNormalizationParameters(featureMatrix);
-		featureMatrix = Normalization.normalizeFeatures(featureMatrix, normalizationParameters);
-
-		// Add the intercept term
-		featureMatrix = SmlUtil.prependOnesVector(featureMatrix);
-
-		// Run gradient descent
 		double alpha = 0.1;
 		int numberOfIterations = 50;
 		SimpleMatrix thetaVector = new SimpleMatrix(3, 1);
-		thetaVector = GradientDescent.minimizeCostWithGradientDescent(new LinearRegressionAlgorithm(), featureMatrix,
-				yVector, thetaVector, alpha, numberOfIterations);
+		IRegressionModel model = new RegressionModelBuilder().withLinearRegression()
+				.withGradientDescentTraining(alpha, numberOfIterations, thetaVector).withNormalization().build();
+
+		// Run gradient descent
+		model.train(featureMatrix, yVector);
 
 		// Predict cost of house
 		double[][] features = { { 1650.0, 3.0 } };
 		SimpleMatrix featureRow = new SimpleMatrix(features);
-		featureRow = Normalization.normalizeFeatures(featureRow, normalizationParameters);
-		featureRow = SmlUtil.prependOnesVector(featureRow);
 		double expectedPrice = 292748.085;
-		double actualPrice = new LinearRegressionAlgorithm().calculateHypothesis(featureRow, thetaVector);
+		double actualPrice = model.calculateHypothesis(featureRow);
 		Assert.assertEquals(expectedPrice, actualPrice, 0.001);
 	}
 
@@ -142,17 +138,18 @@ public class Ex1_LinearRegressionTest {
 		SimpleMatrix matrix = TestUtil.loadFileCSV("ex1data2.txt");
 		SimpleMatrix featureMatrix = matrix.cols(0, matrix.numCols() - 1);
 		SimpleMatrix yVector = matrix.cols(matrix.numCols() - 1, matrix.numCols());
-		featureMatrix = SmlUtil.prependOnesVector(featureMatrix);
+
+		IRegressionModel model = new RegressionModelBuilder().withLinearRegression().withNormalEquationTraining()
+				.withoutNormalization().build();
 
 		// Minimize the cost function
-		SimpleMatrix thetaVector = NormalEquation.minimizeCostWithNormalEquation(featureMatrix, yVector);
+		model.train(featureMatrix, yVector);
 
 		// Predict 1650 square feet, 3 bedrooms
 		double[][] features = { { 1650.0, 3.0 } };
 		SimpleMatrix featureRow = new SimpleMatrix(features);
-		featureRow = SmlUtil.prependOnesVector(featureRow);
 		double expectedHypothesis = 293081.464;
-		double actualHypothesis = new LinearRegressionAlgorithm().calculateHypothesis(featureRow, thetaVector);
+		double actualHypothesis = model.calculateHypothesis(featureRow);
 		Assert.assertEquals(expectedHypothesis, actualHypothesis, 0.1);
 	}
 }

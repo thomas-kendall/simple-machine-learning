@@ -1,15 +1,20 @@
-package sml.core;
+package sml.core.utility;
 
 import org.ejml.simple.SimpleMatrix;
 
 public class SmlUtil {
 
-	public static SimpleMatrix createFeatureRow(double[] features) {
+	public static SimpleMatrix createFeatureMatrix(double[][] features) {
+		SimpleMatrix featureMatrix = new SimpleMatrix(features);
+		featureMatrix = prependOnesVector(featureMatrix);
+		return featureMatrix;
+	}
+
+	public static SimpleMatrix createRow(double[] features) {
 		int rows = 1;
-		int cols = features.length + 1;
+		int cols = features.length;
 		SimpleMatrix featureRow = new SimpleMatrix(rows, cols);
-		featureRow.set(0, 0, 1.0);
-		featureRow.setRow(0, 1, features);
+		featureRow.setRow(0, 0, features);
 		return featureRow;
 	}
 

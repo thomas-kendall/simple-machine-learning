@@ -7,10 +7,11 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import sml.core.IRegressionAlgorithm;
-import sml.core.LogisticRegressionAlgorithm;
-import sml.core.SmlUtil;
-import sml.core.algorithms.minimization.GradientDescent;
+import sml.core.IRegressionModel;
+import sml.core.algorithms.IRegressionAlgorithm;
+import sml.core.algorithms.LogisticRegressionAlgorithm;
+import sml.core.builders.RegressionModelBuilder;
+import sml.core.utility.SmlUtil;
 import sml.test.utility.TestUtil;
 
 public class Ex2_LogisticRegressionTest {
@@ -57,16 +58,14 @@ public class Ex2_LogisticRegressionTest {
 		SimpleMatrix featureMatrix = matrix.cols(0, matrix.numCols() - 1);
 		SimpleMatrix yVector = matrix.cols(matrix.numCols() - 1, matrix.numCols());
 
-		// Add the intercept term
-		featureMatrix = SmlUtil.prependOnesVector(featureMatrix);
+		double alpha = 0.1;
+		int numberOfIterations = 10000;
+		IRegressionModel model = new RegressionModelBuilder().withLogisticRegression()
+				.withGradientDescentTraining(alpha, numberOfIterations).withNormalization().build();
 
 		// Run gradient descent
-		IRegressionAlgorithm regressionAlgorithm = new LogisticRegressionAlgorithm();
-		SimpleMatrix thetaVector = new SimpleMatrix(3, 1);
-		double alpha = 0.01;
-		int numberOfIterations = 10000;
-		thetaVector = GradientDescent.minimizeCostWithGradientDescent(regressionAlgorithm, featureMatrix, yVector,
-				thetaVector, alpha, numberOfIterations);
+		model.train(featureMatrix, yVector);
+		SimpleMatrix thetaVector = model.getThetaVector();
 
 		Assert.assertEquals(-25.161, thetaVector.get(0, 0), 0.01);
 		Assert.assertEquals(0.206, thetaVector.get(1, 0), 0.01);

@@ -1,4 +1,4 @@
-package sml.core;
+package sml.core.algorithms;
 
 import org.ejml.simple.SimpleMatrix;
 
