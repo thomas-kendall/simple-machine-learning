@@ -32,6 +32,7 @@ public class GradientDescentTrainingAlgorithm implements ITrainingAlgorithm {
 		SimpleMatrix thetaVector = getInitialThetaVector(featureMatrix.numCols());
 		double[] costHistory = new double[numberOfIterations];
 		for (int i = 0; i < numberOfIterations; i++) {
+			System.out.println("Training iteration " + i);
 			SimpleMatrix newThetaVector = thetaVector.copy();
 			for (int col = 0; col < featureMatrix.numCols(); col++) {
 				double sum = 0.0;
