@@ -20,7 +20,7 @@ public class Exercise_3_1_2 {
 
 	public void execute() throws IOException {
 		System.out.println("Loading data points...");
-		List<HandWrittenDigitDataPoint> dataPoints = new HandWrittenDigitDataLoader().readFile();
+		List<HandWrittenDigitDataPoint> dataPoints = new HandWrittenDigitDataLoader().readFile(true);
 
 		System.out.println("Generating output...");
 		int rows = 10;

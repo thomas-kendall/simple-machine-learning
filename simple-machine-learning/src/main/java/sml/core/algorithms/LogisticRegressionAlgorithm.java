@@ -2,11 +2,9 @@ package sml.core.algorithms;
 
 import org.ejml.simple.SimpleMatrix;
 
-public class LogisticRegressionAlgorithm implements IRegressionAlgorithm {
+import sml.core.utility.SmlUtil;
 
-	public static double sigmoid(double z) {
-		return 1.0 / (1 + Math.exp(-z));
-	}
+public class LogisticRegressionAlgorithm implements IRegressionAlgorithm {
 
 	@Override
 	public double calculateCost(SimpleMatrix featureMatrix, SimpleMatrix yVector, SimpleMatrix thetaVector) {
@@ -23,7 +21,7 @@ public class LogisticRegressionAlgorithm implements IRegressionAlgorithm {
 
 	@Override
 	public double calculateHypothesis(SimpleMatrix featureRow, SimpleMatrix thetaVector) {
-		return sigmoid(thetaVector.transpose().mult(featureRow.transpose()).get(0, 0));
+		return SmlUtil.sigmoid(thetaVector.transpose().mult(featureRow.transpose()).get(0, 0));
 	}
 
 }

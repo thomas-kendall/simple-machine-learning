@@ -33,6 +33,20 @@ public class HandWrittenDigitDataPoint {
 		return image;
 	}
 
+	public double[] getOriginalPixelValues() {
+		double[] originalPixels = new double[400];
+		for (int i = 0; i < 400; i++) {
+			// Determine which row/col this pixel represents
+			int row = i % 20;
+			int col = i / 20;
+
+			// Store in the field
+			originalPixels[i] = pixels[row][col];
+		}
+
+		return originalPixels;
+	}
+
 	public double getPixel(int i) {
 		int row = i / 20;
 		int col = i % 20;
@@ -58,4 +72,5 @@ public class HandWrittenDigitDataPoint {
 			}
 		}
 	}
+
 }

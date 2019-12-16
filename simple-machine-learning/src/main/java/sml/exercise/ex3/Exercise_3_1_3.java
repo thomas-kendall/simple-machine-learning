@@ -60,7 +60,7 @@ public class Exercise_3_1_3 {
 
 	public void execute() throws IOException {
 		System.out.println("Loading data points...");
-		List<HandWrittenDigitDataPoint> dataPoints = new HandWrittenDigitDataLoader().readFile();
+		List<HandWrittenDigitDataPoint> dataPoints = new HandWrittenDigitDataLoader().readFile(true);
 
 		System.out.println("Setting up classification models...");
 		// Split the dataset into 400/100 for training/evaluating

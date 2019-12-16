@@ -18,9 +18,18 @@ public class Ex2_LogisticRegressionTest {
 
 	@Test
 	public void exercise_2_1_2_1_sigmoid_function() {
-		Assert.assertEquals(0.0, LogisticRegressionAlgorithm.sigmoid(-10.0), 0.001);
-		Assert.assertEquals(0.5, LogisticRegressionAlgorithm.sigmoid(0.0), 0.001);
-		Assert.assertEquals(1.0, LogisticRegressionAlgorithm.sigmoid(10.0), 0.001);
+		Assert.assertEquals(0.0, SmlUtil.sigmoid(-10.0), 0.001);
+		Assert.assertEquals(0.5, SmlUtil.sigmoid(0.0), 0.001);
+		Assert.assertEquals(1.0, SmlUtil.sigmoid(10.0), 0.001);
+
+		SimpleMatrix matrix = new SimpleMatrix(new double[][] { { -10.0, 0, 10.0 }, { 0, 10.0, -10.0 } });
+		matrix = SmlUtil.sigmoid(matrix);
+		Assert.assertEquals(0.0, matrix.get(0, 0), 0.001);
+		Assert.assertEquals(0.5, matrix.get(0, 1), 0.001);
+		Assert.assertEquals(1.0, matrix.get(0, 2), 0.001);
+		Assert.assertEquals(0.5, matrix.get(1, 0), 0.001);
+		Assert.assertEquals(1.0, matrix.get(1, 1), 0.001);
+		Assert.assertEquals(0.0, matrix.get(1, 2), 0.001);
 	}
 
 	@Test

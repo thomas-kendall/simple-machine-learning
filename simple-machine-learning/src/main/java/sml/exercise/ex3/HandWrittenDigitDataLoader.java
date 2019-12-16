@@ -9,22 +9,7 @@ public class HandWrittenDigitDataLoader {
 	private double minValue = 1000;
 	private double maxValue = -1000;
 
-	private double[][] transformPixels(double[] pixelsFromFile) {
-		double[][] pixels = new double[20][20];
-
-		for (int i = 0; i < 400; i++) {
-			// Determine which row/col this pixel represents
-			int row = i % 20;
-			int col = i / 20;
-
-			// Store in the field
-			pixels[row][col] = pixelsFromFile[i];
-		}
-
-		return pixels;
-	}
-
-	public List<HandWrittenDigitDataPoint> readFile() {
+	public List<HandWrittenDigitDataPoint> readFile(boolean applyNormalization) {
 		List<HandWrittenDigitDataPoint> dataPoints = new ArrayList<>();
 
 		ResourceLoader resourceLoader = new ResourceLoader();
@@ -49,11 +34,28 @@ public class HandWrittenDigitDataLoader {
 		});
 
 		// Apply scaling to normalize
-		for (HandWrittenDigitDataPoint dataPoint : dataPoints) {
-			dataPoint.scalePixels(maxValue, minValue);
+		if (applyNormalization) {
+			for (HandWrittenDigitDataPoint dataPoint : dataPoints) {
+				dataPoint.scalePixels(maxValue, minValue);
+			}
 		}
 
 		return dataPoints;
+	}
+
+	private double[][] transformPixels(double[] pixelsFromFile) {
+		double[][] pixels = new double[20][20];
+
+		for (int i = 0; i < 400; i++) {
+			// Determine which row/col this pixel represents
+			int row = i % 20;
+			int col = i / 20;
+
+			// Store in the field
+			pixels[row][col] = pixelsFromFile[i];
+		}
+
+		return pixels;
 	}
 
 }
